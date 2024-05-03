@@ -1,5 +1,5 @@
 #!/bin/env/usr python
-# This utility lets you quickly pull up details about your Okta organization
+# This utility lets you quickly pull up details about your Okta organization from a CLI interface
 
 import requests
 

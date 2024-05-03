@@ -17,6 +17,7 @@ Currently supports the following:
 ## Prerequisites
 - Python install
 - A read-only token to your Okta environment
+- The **requests** Python module (installable by running `python3 -m pip install requests`)
 
 ## Getting Started
 Clone the repository and adjust the following variables:
