@@ -31,7 +31,7 @@ def getUserDetails():
         getUserApps = requests.get(getUserAppsEndpoint, headers=headers).json()
 
         # Modify this blob with the any fields from the profile that you want to include!
-        print(f"-----PROFILE DETAILS FOR {username}-----\n\nName: {userInfo["profile"]["firstName"]} {userInfo["profile"]["lastName"]}\nUser Status: {userInfo["status"]}\nDepartment: {userInfo["profile"]["department"]}\nManager Email: {userInfo["profile"]["managerEmail"]}\nOnboarding Completed?: {userInfo["profile"]["onboardingComplete"]}\nBeyond Identity Registered?: {userInfo["profile"]["byndidRegistered"]}\n\n")
+        print(f"-----PROFILE DETAILS FOR {username}-----\n\nName: {userInfo["profile"]["firstName"]} {userInfo["profile"]["lastName"]}\nUser Status: {userInfo["status"]}\nDepartment: {userInfo["profile"]["department"]}\nManager Email: {userInfo["profile"]["managerEmail"]}\n\n")
 
         # Prints all of the user's groups
         userGroups = ""
