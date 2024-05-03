@@ -24,12 +24,14 @@ Clone the repository and adjust the following variables:
 - Add your read-only token into the `headers` variable
 - Adjust the `oktaDomain` variable to use your custom domain.
 
-You can also optionally adjust the print statement under line 33 to include additional profile details, such as custom fields, by using this syntax:
-
-`\nField Name: {userInfo["profile"]["fieldApiName"]}`
-
-**Note**: I recommend running a one-off API call to fetch a user in your Okta environment to easily see what your field API names are, but you can also find them in Okta's profile editor. 
-
 Set it to be an executable with `chmod + x /path/to/utility`.
 
 You should be ready to use the utility!
+
+## Customization
+
+You can adjust the print statement under line 33 to include additional profile details, such as custom fields, by using this syntax:
+
+`\nField Name: {userInfo["profile"]["fieldApiName"]}`
+
+I recommend running a one-off API call to fetch a user in your Okta environment to easily >see what your field API names are, but you can also find them in Okta's profile editor. This customization guidance applies to other print statements in the utility as well.
