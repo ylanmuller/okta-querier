@@ -53,7 +53,6 @@ def getUserDetails():
         mainMenuChoice()
 
 def getAppDetails():
-    print("We'll get you those details soon.")
     # Lets you enter an app name, pull up a list of the applicable apps, enter the ID of the one you want to dig into, and then pull up details about it.
     appName = input("Enter the name of the app you want to find: ")
     findAppEndpoint = "https://" + oktaDomain + f"/api/v1/apps?q={appName}"
