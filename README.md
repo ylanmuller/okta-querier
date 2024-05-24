@@ -22,10 +22,17 @@ Currently supports the following:
 ## Getting Started
 Clone the repository and adjust the following variables:
 
-- Add your read-only token into the `headers` variable
-- Adjust the `oktaDomain` variable to use your custom domain.
-
-Set it to be an executable with `chmod +x /path/to/utility`.
+- Adjust the `base_url` variable to use your custom domain.
+- Create an OIDC app in Okta and retrieve the Client Id value:
+    1. From Okta go to Applications > Applications > Create App Integration and select "OIDC". Set app type to "Native."
+    2. Check "Device Authorization" on the next page
+    3. Assign a group of users who will be allowed to authorize the app to your environment. You can skip this and do it later from the Assignments tab.
+    4. Go to "Okta API Scopes" and configure the following scopes:
+        - okta.users.read
+        - okta.groups.read
+        - okta.apps.read
+    5. Copy the Client ID from the "General" tab and update the `client_id` variable
+- Set it to be an executable with `chmod +x /path/to/utility`.
 
 You should be ready to use the utility!
 
