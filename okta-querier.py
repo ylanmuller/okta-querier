@@ -55,8 +55,10 @@ def get_user_details():
         user = find_users[0]
         get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups/?limit=200'
         groups = session.get(get_user_groups_endpoint).json()
+        user_groups_sorted = sorted(groups, key=lambda x: str.lower(x['profile']['name']))
         get_user_apps_endpoint = base_url + f'/api/v1/apps/?filter=user.id eq \"{user['id']}\"&limit=200'
         apps = session.get(get_user_apps_endpoint).json()
+        user_apps_sorted = sorted(apps, key=lambda x: str.lower(x['label']))
 
         # Modify this blob with the any fields from the profile that you want to include!
         print(f'-----PROFILE DETAILS FOR {email}-----')
@@ -69,12 +71,12 @@ def get_user_details():
 
         print('-----LIST OF USER\'S GROUPS----- (Currently limited to first 200)')
         print()
-        for group in groups:
+        for group in user_groups_sorted:
             print(group['profile']['name'])
         print()
 
         print('-----LIST OF USER\'S APPS----- (Currently limited to first 200)')
-        for app in apps:
+        for app in user_apps_sorted:
             print(app['label'])
         print()
         
