@@ -151,7 +151,7 @@ def get_group_details():
         group_members = session.get(get_associated_users_endpoint).json()
 
         if group_members:
-            group_members_sorted = sorted(group_members, key=lambda x: x['status'])
+            group_members_sorted = sorted(group_members, key=lambda u: u['status'])
             print('-----MEMBERS-----')
             print()
             for user in group_members_sorted:
