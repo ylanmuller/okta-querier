@@ -8,8 +8,8 @@ import time
 
 # Authorize against the OIDC app configured in your Okta tenant. Code courtesy of gabrielsroka: https://github.com/gabrielsroka
 # Set these values. See the README for more information:
-base_url = 'https://yourdomain.okta.com'
-client_id = 'your client id'
+base_url = 'https://your_domain.okta.com'
+client_id = 'OIDC App Client Id'
 scope = 'okta.users.read okta.groups.read okta.apps.read'
 
 auth_url = base_url + '/oauth2/v1/device/authorize'
