@@ -1,4 +1,4 @@
-#!/bin/env/usr python
+#!/usr/bin/env python
 
 """This utility lets you quickly pull up details about your Okta organization from a CLI interface"""
 
@@ -12,12 +12,13 @@ base_url = 'https://your_domain.okta.com'
 client_id = 'OIDC App Client Id'
 scope = 'okta.users.read okta.groups.read okta.apps.read'
 
+session = requests.Session()
 auth_url = base_url + '/oauth2/v1/device/authorize'
 auth_payload = {
     'client_id': client_id,
     'scope': 'openid ' + scope
 }
-auth = requests.post(auth_url, data=auth_payload).json()
+auth = session.post(auth_url, data=auth_payload).json()
 webbrowser.open_new(auth['verification_uri_complete'])
 
 while True:
@@ -28,37 +29,44 @@ while True:
         'device_code': auth['device_code'],
         'grant_type': 'urn:ietf:params:oauth:grant-type:device_code'
     }
-    tokens = requests.post(token_url, data=token_payload).json()
+    tokens = session.post(token_url, data=token_payload).json()
     access_token = tokens.get('access_token')
     if access_token: break
 
-session = requests.Session()
 session.headers['authorization'] = 'Bearer ' + access_token
 
-def main_menu_choice():
-    """Handling for whether to be returned to the main menu"""
-    continue_decision = input('Would you like to return to the main menu? y/n: ')
-    if continue_decision == 'y':
-        main_menu()
-    elif continue_decision == 'n':
-        exit
-    else:
-        print('That is not a valid selection. Please try again.')
-        main_menu_choice()
+def main_menu():
+    while True:
+        print('What would you like to do today? Enter the number that corresponds to what you want to do from the list.')
+        print('1: Get user details')
+        print('2: Get app details')
+        print('3: Get group details')
+        print('Q: Quit')
+        choice = input('Make your selection: ')
+        if choice == '1':
+            get_user_details()
+        elif choice == '2':
+            get_app_details()
+        elif choice == '3':
+            get_group_details()
+        elif choice in ('q', 'Q'):
+            exit()
+        else:
+            print('Sorry, that choice is not valid! Try again.')
 
 def get_user_details():
     """Lets you enter the email address of a user you want to look up, fetches the first match, and prints info"""
     email = input('Enter the exact email address of an active user you want to look up: ')
-    find_user_endpoint = base_url + '/api/v1/users?search=profile.email eq "' + email + '"'
+    find_user_endpoint = base_url + f'/api/v1/users?search=profile.email eq "{email}"'
     find_users = session.get(find_user_endpoint).json()
     if find_users:
         user = find_users[0]
-        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups/?limit=200'
+        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups?limit=200'
         groups = session.get(get_user_groups_endpoint).json()
-        user_groups_sorted = sorted(groups, key=lambda x: str.lower(x['profile']['name']))
-        get_user_apps_endpoint = base_url + f'/api/v1/apps/?filter=user.id eq \"{user['id']}\"&limit=200'
+        user_groups_sorted = sorted(groups, key=lambda g: str.lower(g['profile']['name']))
+        get_user_apps_endpoint = base_url + f'/api/v1/apps/?filter=user.id eq "{user['id']}"&limit=200'
         apps = session.get(get_user_apps_endpoint).json()
-        user_apps_sorted = sorted(apps, key=lambda x: str.lower(x['label']))
+        user_apps_sorted = sorted(apps, key=lambda g: str.lower(g['label']))
 
         # Modify this blob with the any fields from the profile that you want to include!
         print(f'-----PROFILE DETAILS FOR {email}-----')
@@ -79,12 +87,8 @@ def get_user_details():
         for app in user_apps_sorted:
             print(app['label'])
         print()
-        
-        main_menu_choice()
-
     else:
         print('That user either does not exist in Okta or is inactive.')
-        main_menu_choice()
 
 def get_app_details():
     """Lets you enter an app name, pull up a list of the applicable apps, enter the ID of the one you want to dig into, and then pull up details about it."""
@@ -117,11 +121,8 @@ def get_app_details():
             get_group_details_endpoint = base_url + f"/api/v1/groups/{group['id']}"
             get_group_details = session.get(get_group_details_endpoint).json()
             print(get_group_details['profile']['name'], '|',  group['id'], '| Priority:', group['priority'])
-
-        main_menu_choice()
     else:
         print('We were not able to find that app.')
-        main_menu_choice()
 
 def get_group_details():
     """Lets you enter the name of a group and returns a list of all potential matches"""
@@ -155,28 +156,9 @@ def get_group_details():
             print()
             for user in group_members_sorted:
                 print(user['profile']['firstName'], user['profile']['lastName'], '| Status:', user['status'])
-            main_menu_choice()
         else:
             print('There are no users in this group.')
-            main_menu_choice()
     else:
         print('We were not able to find a matching group.')
-        main_menu_choice()
-
-def main_menu():
-    print('What would you like to do today? Enter the number that corresponds to what you want to do from the list.')
-    print('1: Get user details')
-    print('2: Get app details')
-    print('3: Get group details')
-    choice = input('Make your selection: ')
-    if choice == '1':
-        get_user_details()
-    elif choice == '2':
-        get_app_details()
-    elif choice == '3':
-        get_group_details()
-    else:
-        print('Sorry, that choice is not valid! Try again.')
-        main_menu()
 
 main_menu()
