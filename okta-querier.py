@@ -72,7 +72,7 @@ def get_user_details():
         print(f'-----PROFILE DETAILS FOR {email}-----')
         print()
         print('Name:', user['profile']['firstName'], user['profile']['lastName'])
-        print('User Status:', user['status'])
+        print('Status:', user['status'])
         print('Department:', user['profile'].get('department'))
         print('Manager Email:', user['profile'].get('managerEmail'))
         print()
