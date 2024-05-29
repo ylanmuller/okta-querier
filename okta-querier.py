@@ -9,7 +9,7 @@ import time
 # Authorize against the OIDC app configured in your Okta tenant. Code courtesy of gabrielsroka: https://github.com/gabrielsroka
 # Set these values. See the README for more information:
 base_url = 'https://your_domain.okta.com'
-client_id = 'OIDC APP Client Id'
+client_id = 'OIDC App Client Id'
 scope = 'okta.users.read okta.groups.read okta.apps.read'
 
 auth_url = base_url + '/oauth2/v1/device/authorize'
@@ -53,9 +53,9 @@ def get_user_details():
     find_users = session.get(find_user_endpoint).json()
     if find_users:
         user = find_users[0]
-        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups'
+        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups/?limit=200'
         groups = session.get(get_user_groups_endpoint).json()
-        get_user_apps_endpoint = base_url + f'/api/v1/users/{user["id"]}/appLinks'
+        get_user_apps_endpoint = base_url + f'/api/v1/apps/?filter=user.id eq \"{user['id']}\"&limit=200'
         apps = session.get(get_user_apps_endpoint).json()
 
         # Modify this blob with the any fields from the profile that you want to include!
@@ -67,14 +67,13 @@ def get_user_details():
         print('Manager Email:', user['profile'].get('managerEmail'))
         print()
 
-
-        print('-----LIST OF USER\'S GROUPS-----')
+        print('-----LIST OF USER\'S GROUPS----- (Currently limited to first 200)')
         print()
         for group in groups:
             print(group['profile']['name'])
         print()
 
-        print('-----LIST OF USER\'S APPS-----')
+        print('-----LIST OF USER\'S APPS----- (Currently limited to first 200)')
         for app in apps:
             print(app['label'])
         print()
@@ -142,15 +141,17 @@ def get_group_details():
         print('Description:', group['profile']['description'])
         print('Created:', group['created'])
         print('Last Membership Updated:', group['lastMembershipUpdated'])
+        print()
 
         # Print all users
         get_associated_users_endpoint = base_url + f'/api/v1/groups/{group_id}/users'
         group_members = session.get(get_associated_users_endpoint).json()
 
         if group_members:
+            group_members_sorted = sorted(group_members, key=lambda x: x['status'])
             print('-----MEMBERS-----')
             print()
-            for user in group_members:
+            for user in group_members_sorted:
                 print(user['profile']['firstName'], user['profile']['lastName'], '| Status:', user['status'])
             main_menu_choice()
         else:
