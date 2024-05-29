@@ -16,7 +16,7 @@ Currently supports the following:
 
 ## Prerequisites
 - Python install
-- The **requests** Python module (installable by running `python3 -m pip install requests`)
+- The **requests**, **webbrowser**, and **time**, and Python modules (installable by running `python3 -m pip install module_name`)
 
 ## Getting Started
 Clone the repository and adjust the following variables:
