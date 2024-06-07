@@ -8,8 +8,8 @@ import time
 
 # Authorize against the OIDC app configured in your Okta tenant. Code courtesy of gabrielsroka: https://github.com/gabrielsroka
 # Set these values. See the README for more information:
-base_url = 'https://your_domain.okta.com'
-client_id = 'OIDC App Client Id'
+base_url = 'https://firehydrant.okta.com'
+client_id = '0oa157pa327V1ZmV5358'
 scope = 'okta.users.read okta.groups.read okta.apps.read'
 
 session = requests.Session()
@@ -57,18 +57,20 @@ def main_menu():
 def get_user_details():
     """Lets you enter the email address of a user you want to look up, fetches the first match, and prints info"""
     email = input('Enter the exact email address of an active user you want to look up: ')
-    find_user_endpoint = base_url + f'/api/v1/users?search=profile.email eq "{email}"'
-    find_users = session.get(find_user_endpoint).json()
-    if find_users:
-        user = find_users[0]
+    find_user_endpoint = base_url + f'/api/v1/users/{email}'
+    user = session.get(find_user_endpoint).json()
+    if user:
+        # Add pagination here
         get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups?limit=200'
         groups = session.get(get_user_groups_endpoint).json()
         user_groups_sorted = sorted(groups, key=lambda g: str.lower(g['profile']['name']))
+        # Add pagination here
         get_user_apps_endpoint = base_url + f'/api/v1/apps?filter=user.id eq "{user["id"]}"&limit=200'
         apps = session.get(get_user_apps_endpoint).json()
         user_apps_sorted = sorted(apps, key=lambda a: str.lower(a['label']))
 
         # Modify this blob with the any fields from the profile that you want to include!
+        print()
         print(f'-----PROFILE DETAILS FOR {email}-----')
         print()
         print('Name:', user['profile']['firstName'], user['profile']['lastName'])
@@ -106,6 +108,7 @@ def get_app_details():
         app_groups = session.get(get_associated_groups_endpoint).json()
 
         # Print some basic details about the application
+        print()
         print(f"-----APP DETAILS FOR {app['label']}-----")
         print()
         print('Name:', app['name'])
@@ -138,6 +141,7 @@ def get_group_details():
         group = session.get(get_group_details_endpoint).json()
 
         # Print details about the group
+        print()
         print(f"-----GROUP DETAILS FOR {group['profile']['name']}-----")
         print()
         print('Id:', group['id'])
