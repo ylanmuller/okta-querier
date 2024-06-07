@@ -176,7 +176,7 @@ def get_group_details():
         print('Last Membership Updated:', group['lastMembershipUpdated'])
         print()
 
-        # Print all users
+        # Print all users in the group
         get_associated_users_endpoint = base_url + f'/api/v1/groups/{group_id}/users'
         group_members = session.get(get_associated_users_endpoint).json()
 
