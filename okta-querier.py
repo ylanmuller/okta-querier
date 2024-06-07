@@ -9,8 +9,8 @@ import json
 
 # Authorize against the OIDC app configured in your Okta tenant. Code courtesy of gabrielsroka: https://github.com/gabrielsroka
 # Set these values. See the README for more information:
-base_url = 'https://firehydrant.okta.com'
-client_id = '0oa157pa327V1ZmV5358'
+base_url = 'https://your_domain.okta.com'
+client_id = 'OIDC App Client ID'
 scope = 'okta.users.read okta.groups.read okta.apps.read'
 
 session = requests.Session()
