@@ -16,7 +16,7 @@ Currently supports the following:
 
 ## Prerequisites
 - Python install
-- The **requests**, **webbrowser**, and **time**, and Python modules (installable by running `python3 -m pip install module_name`)
+- The **requests**, **webbrowser**, **json**, and **time**, and Python modules (installable by running `python3 -m pip install module_name`)
 
 ## Getting Started
 Clone the repository and adjust the following variables:
@@ -37,7 +37,7 @@ You should be ready to use the utility!
 
 ## Customization
 
-You can adjust the print statement under line 33 to include additional profile details, such as custom fields, by using this syntax:
+You can adjust the print statement under line 68 to include additional profile details, such as custom fields, by using this syntax:
 
 `\nField Name: {userInfo["profile"]["fieldApiName"]}`
 
