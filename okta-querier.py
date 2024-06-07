@@ -38,11 +38,14 @@ session.headers['authorization'] = 'Bearer ' + access_token
 
 def main_menu():
     while True:
+        print()
         print('What would you like to do today? Enter the number that corresponds to what you want to do from the list.')
+        print()
         print('1: Get user details')
         print('2: Get app details')
         print('3: Get group details')
         print('Q: Quit')
+        print()
         choice = input('Make your selection: ')
         if choice == '1':
             get_user_details()
@@ -54,6 +57,7 @@ def main_menu():
             exit()
         else:
             print('Sorry, that choice is not valid! Try again.')
+        print()
 
 def get_user_details():
     """Lets you enter the email address of a user you want to look up, fetches the first match, and prints info"""
