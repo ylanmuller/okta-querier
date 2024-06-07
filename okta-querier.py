@@ -5,6 +5,7 @@
 import requests
 import webbrowser
 import time
+import json
 
 # Authorize against the OIDC app configured in your Okta tenant. Code courtesy of gabrielsroka: https://github.com/gabrielsroka
 # Set these values. See the README for more information:
@@ -59,17 +60,10 @@ def get_user_details():
     email = input('Enter the exact email address of an active user you want to look up: ')
     find_user_endpoint = base_url + f'/api/v1/users/{email}'
     user = session.get(find_user_endpoint).json()
-    if user:
-        # Add pagination here
-        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups?limit=200'
-        groups = session.get(get_user_groups_endpoint).json()
-        user_groups_sorted = sorted(groups, key=lambda g: str.lower(g['profile']['name']))
-        # Add pagination here
-        get_user_apps_endpoint = base_url + f'/api/v1/apps?filter=user.id eq "{user["id"]}"&limit=200'
-        apps = session.get(get_user_apps_endpoint).json()
-        user_apps_sorted = sorted(apps, key=lambda a: str.lower(a['label']))
-
-        # Modify this blob with the any fields from the profile that you want to include!
+    
+    # Checks for whether the payload contains a user ID. If the lookup fails, the ID is not included.
+    if 'id' in user:
+        # Modify this blob with the any user proile fields you want to include!
         print()
         print(f'-----PROFILE DETAILS FOR {email}-----')
         print()
@@ -79,13 +73,41 @@ def get_user_details():
         print('Manager Email:', user['profile'].get('managerEmail'))
         print()
 
-        print('-----LIST OF USER\'S GROUPS----- (Currently limited to first 200)')
+        # Get user's groups
+        get_user_groups_endpoint = base_url + f'/api/v1/users/{user["id"]}/groups'
+        all_groups = []
+        while get_user_groups_endpoint:
+            response = session.get(get_user_groups_endpoint)
+            groups = json.loads(response.text)
+            all_groups.extend(groups)
+
+            if 'next' in response.links:
+                get_user_groups_endpoint = response.links['next']['url']
+            else:
+                get_user_groups_endpoint = None
+        user_groups_sorted = sorted(all_groups, key=lambda g: str.lower(g['profile']['name']))
+
+        print('-----LIST OF USER\'S GROUPS-----')
         print()
         for group in user_groups_sorted:
             print(group['profile']['name'])
         print()
 
-        print('-----LIST OF USER\'S APPS----- (Currently limited to first 200)')
+        # Get user's applications
+        get_user_apps_endpoint = base_url + f'/api/v1/apps?filter=user.id eq "{user["id"]}"'
+        all_apps = []
+        while get_user_apps_endpoint:
+            response = session.get(get_user_apps_endpoint)
+            apps = json.loads(response.text)
+            all_apps.extend(apps)
+
+            if 'next' in response.links:
+                get_user_apps_endpoint = response.links['next']['url']
+            else:
+                get_user_apps_endpoint = None
+        user_apps_sorted = sorted(all_apps, key=lambda a: str.lower(a['label']))
+
+        print('-----LIST OF USER\'S APPS-----')
         for app in user_apps_sorted:
             print(app['label'])
         print()
