@@ -39,6 +39,6 @@ You should be ready to use the utility!
 
 You can adjust the print statement under line 68 to include additional profile details, such as custom fields, by using this syntax:
 
-`\nField Name: {userInfo["profile"]["fieldApiName"]}`
+`print('Field Name:', user['profile'].get('fieldApiName'))`
 
 I recommend running a one-off API call to fetch a user in your Okta environment to easily see what your field API names are, but you can also find them in Okta's profile editor. This customization guidance applies to other print statements in the utility as well.
